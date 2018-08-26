@@ -1,0 +1,64 @@
+# branches to build
+branches:
+  # whitelist
+  only:
+    - master
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# fetch repository as zip archive for faster clone
+shallow_clone: true
+clone_depth: 1
+
+platform:
+  - x86
+  - x64
+
+for:
+- matrix:
+    only:
+      - platform: x64
+  init:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+- matrix:
+    only:
+      - platform: x86
+  init:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
+
+environment:
+  QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
+
+install:
+  # pull any updated mirrors for vcpkg packages
+  - cd C:\tools\vcpkg
+  - git pull
+  - cd %APPVEYOR_BUILD_FOLDER%
+  # copy da patches over to da vcpkg port
+  - ps: Copy-Item ".\fix-system-pcre2.patch" -Destination "$env:QT5PORTDIR"
+  - ps: Copy-Item ".\fix-system-pcre2-linux.patch" -Destination "$env:QT5PORTDIR"
+  - ps: Copy-Item ".\fix-msvc2017.patch" -Destination "$env:QT5PORTDIR"
+  # copy over the actual portfile
+  - ps: Copy-Item ".\portfile.cmake" -Destination "$env:QT5PORTDIR"
+
+build_script:
+  # run the install from bash so proxy is detected
+  - vcpkg install qt5-base:x64-windows-static
+  # zip up the deps to push artifact to releases
+  - 7z a rgmdeps-%PLATFORM%.zip C:\tools\vcpkg\installed\x64-windows-static
+
+artifacts:
+  - path: rgmdeps-$(PLATFORM).zip
+    name: rgmdeps-$(PLATFORM)
+
+deploy:
+  release: rgmdeps-v$(appveyor_build_version)
+  provider: GitHub
+  auth_token:
+    secure: UKYzmlrsvIw9Ah1+6C2GySQ4GS5L019TFiS8Q6mipN5iIqfTl8fMo298GfjG+nlX
+  artifact: rgmdeps-$(PLATFORM)
+  draft: false
+  prerelease: false
+  on:
+    branch: master
