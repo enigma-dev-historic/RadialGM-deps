@@ -29,6 +29,7 @@ for:
 
 environment:
   QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
+  TRIPLET: $(PLATFORM)-windows-static
 
 install:
   # pull any updated mirrors for vcpkg packages
@@ -44,9 +45,9 @@ install:
 
 build_script:
   # run the install from bash so proxy is detected
-  - vcpkg install qt5-base:%PLATFORM%-windows-static
+  - vcpkg install qt5-base pugixml rapidjson yaml-cpp protobuf grpc qscintilla --triplet %TRIPLET%
   # zip up the deps to push artifact to releases
-  - 7z a rgmdeps-%PLATFORM%.zip C:\tools\vcpkg\installed\%PLATFORM%-windows-static
+  - 7z a rgmdeps-%PLATFORM%.zip C:\tools\vcpkg\installed\%TRIPLET%
 
 artifacts:
   - path: rgmdeps-$(PLATFORM).zip
