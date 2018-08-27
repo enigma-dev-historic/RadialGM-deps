@@ -30,24 +30,40 @@ for:
 environment:
   QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
   TRIPLET: $(PLATFORM)-windows-static
+  ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
+  matrix:
+    - DEPS: qt5-base
+    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
 
 install:
   # pull any updated mirrors for vcpkg packages
   - cd C:\tools\vcpkg
   - git pull
   - cd %APPVEYOR_BUILD_FOLDER%
-  # copy da patches over to da vcpkg port
-  - ps: Copy-Item ".\fix-system-pcre2.patch" -Destination "$env:QT5PORTDIR"
-  - ps: Copy-Item ".\fix-system-pcre2-linux.patch" -Destination "$env:QT5PORTDIR"
-  - ps: Copy-Item ".\fix-msvc2017.patch" -Destination "$env:QT5PORTDIR"
-  # copy over the actual portfile
-  - ps: Copy-Item ".\portfile.cmake" -Destination "$env:QT5PORTDIR"
+  - ps: |
+      # copy da patches over to da vcpkg port
+      Copy-Item ".\fix-system-pcre2.patch" -Destination "$env:QT5PORTDIR"
+      Copy-Item ".\fix-system-pcre2-linux.patch" -Destination "$env:QT5PORTDIR"
+      Copy-Item ".\fix-msvc2017.patch" -Destination "$env:QT5PORTDIR"
+      # copy over the actual portfile
+      Copy-Item ".\portfile.cmake" -Destination "$env:QT5PORTDIR"
+  - ps: |
+      If (($env:APPVEYOR_JOB_NUMBER -eq 2) -or ($env:APPVEYOR_JOB_NUMBER -eq 4)) {
+        # get the id of the previous job
+        $apiURL = "https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG"
+        $project = Invoke-RestMethod -Method Get -Uri $apiURL/build/$env:APPVEYOR_BUILD_VERSION
+        $archive_job = $project.build.jobs[$env:APPVEYOR_JOB_NUMBER - 1].jobId
+        # download and extract the previous deps so we can ammend them
+        $artifactsURL = "https://ci.appveyor.com/api/buildjobs/$archive_job/artifacts/"
+        appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
+        7z a $env:ARTIFACT_NAME C:\tools\vcpkg\installed\$env:TRIPLET
+      }
 
 build_script:
   # run the install from bash so proxy is detected
-  - vcpkg install qt5-base pugixml rapidjson yaml-cpp protobuf grpc qscintilla --triplet %TRIPLET%
+  - vcpkg install %DEPS% --triplet %TRIPLET%
   # zip up the deps to push artifact to releases
-  - 7z a rgmdeps-%PLATFORM%.zip C:\tools\vcpkg\installed\%TRIPLET%
+  - 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed\%TRIPLET%
 
 artifacts:
   - path: rgmdeps-$(PLATFORM).zip
