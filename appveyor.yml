@@ -44,9 +44,9 @@ install:
 
 build_script:
   # run the install from bash so proxy is detected
-  - vcpkg install qt5-base:x64-windows-static
+  - vcpkg install qt5-base:%PLATFORM%-windows-static
   # zip up the deps to push artifact to releases
-  - 7z a rgmdeps-%PLATFORM%.zip C:\tools\vcpkg\installed\x64-windows-static
+  - 7z a rgmdeps-%PLATFORM%.zip C:\tools\vcpkg\installed\%PLATFORM%-windows-static
 
 artifacts:
   - path: rgmdeps-$(PLATFORM).zip
