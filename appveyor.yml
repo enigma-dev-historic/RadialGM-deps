@@ -31,9 +31,12 @@ environment:
   QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
   TRIPLET: $(PLATFORM)-windows-static
   ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
+  # change this if you add more DEPS to matrix
+  MATRIX_SIZE: 1
   matrix:
-    - DEPS: qt5-base
-    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
+    - {DEPS: pugixml, LAST_JOB: true}
+    #- DEPS: qt5-base
+    #- DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
 
 install:
   # pull any updated mirrors for vcpkg packages
@@ -48,12 +51,16 @@ install:
       # copy over the actual portfile
       Copy-Item ".\portfile.cmake" -Destination "$env:QT5PORTDIR"
   - ps: |
-      If ($env:APPVEYOR_JOB_NUMBER -gt 2) {
-        # get the id of the previous job
+      # this depends on a deterministic ordering of the jobs
+      # where every other job has the same architecture
+      # (e.g, debug x86, debug x64, release x86, release x64)
+      # jobs 1 and 3, and 2 and 4 have the same architectures
+      If ($env:APPVEYOR_JOB_NUMBER -gt $env:MATRIX_SIZE) {
+        # get the id of the previous job for the same architecture
         $apiURL = "https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG"
         $project = Invoke-RestMethod -Method Get -Uri $apiURL/build/$env:APPVEYOR_BUILD_VERSION
-        $archive_job = $project.build.jobs[$env:APPVEYOR_JOB_NUMBER - 2].jobId
-        # download and extract the previous deps so we can ammend them
+        $archive_job = $project.build.jobs[$env:APPVEYOR_JOB_NUMBER - $env:MATRIX_SIZE].jobId
+        # download and extract the previous deps so we can amend them
         $artifactsURL = "https://ci.appveyor.com/api/buildjobs/$archive_job/artifacts/"
         appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
         7z a $env:ARTIFACT_NAME C:\tools\vcpkg\installed\$env:TRIPLET
@@ -79,3 +86,4 @@ deploy:
   prerelease: false
   on:
     branch: master
+    LAST_JOB: true
