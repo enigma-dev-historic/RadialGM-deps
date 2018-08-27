@@ -34,7 +34,7 @@ environment:
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 1
   matrix:
-    - {DEPS: pugixml, LAST_JOB: true}
+    - {DEPS: pugixml}
     #- DEPS: qt5-base
     #- DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
 
@@ -65,12 +65,15 @@ install:
         appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
         7z a $env:ARTIFACT_NAME C:\tools\vcpkg\installed\$env:TRIPLET
       }
+      $DEPLOY_JOB = ($env:APPVEYOR_JOB_NUMBER -gt $env:MATRIX_SIZE)
 
 build_script:
   # run the install from bash so proxy is detected
-  - vcpkg install %DEPS% --triplet %TRIPLET%
+  #- vcpkg install %DEPS% --triplet %TRIPLET%
   # zip up the deps to push artifact to releases
-  - 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed\%TRIPLET%
+  #- 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed\%TRIPLET%
+  - echo %bot_push_on_green_token%
+  - 7z a %ARTIFACT_NAME% portfile.cmake
 
 artifacts:
   - path: rgmdeps-$(PLATFORM).zip
@@ -86,4 +89,4 @@ deploy:
   prerelease: false
   on:
     branch: master
-    LAST_JOB: true
+    DEPLOY_JOB: true
