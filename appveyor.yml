@@ -65,7 +65,6 @@ install:
         appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
         7z a $env:ARTIFACT_NAME C:\tools\vcpkg\installed\$env:TRIPLET
       }
-      $DEPLOY_JOB = ($env:APPVEYOR_JOB_NUMBER -gt $env:MATRIX_SIZE)
 
 build_script:
   # run the install from bash so proxy is detected
@@ -89,4 +88,3 @@ deploy:
   prerelease: false
   on:
     branch: master
-    DEPLOY_JOB: true
