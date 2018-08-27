@@ -48,11 +48,11 @@ install:
       # copy over the actual portfile
       Copy-Item ".\portfile.cmake" -Destination "$env:QT5PORTDIR"
   - ps: |
-      If (($env:APPVEYOR_JOB_NUMBER -eq 2) -or ($env:APPVEYOR_JOB_NUMBER -eq 4)) {
+      If ($env:APPVEYOR_JOB_NUMBER -gt 2) {
         # get the id of the previous job
         $apiURL = "https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG"
         $project = Invoke-RestMethod -Method Get -Uri $apiURL/build/$env:APPVEYOR_BUILD_VERSION
-        $archive_job = $project.build.jobs[$env:APPVEYOR_JOB_NUMBER - 1].jobId
+        $archive_job = $project.build.jobs[$env:APPVEYOR_JOB_NUMBER - 2].jobId
         # download and extract the previous deps so we can ammend them
         $artifactsURL = "https://ci.appveyor.com/api/buildjobs/$archive_job/artifacts/"
         appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
