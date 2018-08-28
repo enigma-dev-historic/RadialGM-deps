@@ -37,8 +37,8 @@ environment:
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 2
   matrix:
-    - DEPS: qt5-base
-    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
+    - DEPS: qt5-base qscintilla
+    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc
 
 install:
   # pull any updated mirrors for vcpkg packages
