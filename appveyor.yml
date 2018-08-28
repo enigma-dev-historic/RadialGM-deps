@@ -32,13 +32,12 @@ for:
 
 environment:
   QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
-  TRIPLET: $(PLATFORM)-windows-static
   ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 2
   matrix:
-    - DEPS: qt5-base qscintilla
-    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc
+    - DEPS: qt5-base
+    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
 
 install:
   # pull any updated mirrors for vcpkg packages
@@ -67,14 +66,14 @@ install:
         # download and extract the previous deps so we can amend them
         $artifactsURL = "https://ci.appveyor.com/api/buildjobs/$archive_job/artifacts/"
         appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
-        7z e -mmt $env:ARTIFACT_NAME C:\tools\vcpkg\installed\$env:TRIPLET
+        7z e -mmt $env:ARTIFACT_NAME C:\tools\vcpkg\installed
       }
 
 build_script:
   # run the install from bash so proxy is detected
-  - vcpkg install %DEPS% --triplet %TRIPLET%
+  - vcpkg install %DEPS% --triplet %PLATFORM%-windows-static
   # zip up the deps to push artifact to releases
-  - 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed\%TRIPLET%
+  - 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed
 
 artifacts:
   - path: $(ARTIFACT_NAME)
