@@ -37,8 +37,10 @@ environment:
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 2
   matrix:
-    - DEPS: qt5-base
-    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
+    - DEPS: pugixml
+    - DEPS: pugixml
+    #- DEPS: qt5-base
+    #- DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
 
 install:
   # pull any updated mirrors for vcpkg packages
@@ -62,9 +64,11 @@ install:
         $apiURL = "https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG"
         $project = Invoke-RestMethod -Method Get -Uri $apiURL/build/$env:APPVEYOR_BUILD_VERSION
         $archive_job = $project.build.jobs[$env:APPVEYOR_JOB_NUMBER - $env:MATRIX_SIZE].jobId
+        Write-Hose $archive_job
         # download and extract the previous deps so we can amend them
         $artifactsURL = "https://ci.appveyor.com/api/buildjobs/$archive_job/artifacts/"
         appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
+        Write-Hose ($artifactsURL + $env:ARTIFACT_NAME)
         7z e -mmt $env:ARTIFACT_NAME C:\tools\vcpkg\installed\$env:TRIPLET
       }
 
