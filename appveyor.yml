@@ -95,6 +95,8 @@ deploy:
   artifact: $(ARTIFACT_NAME)
   draft: false
   prerelease: false
+  # because each job deploys the same deps but amended we need
+  # to force overwrite the previous ones of this release
   force_update: true
   on:
     branch: master
