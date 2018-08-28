@@ -35,11 +35,10 @@ environment:
   TRIPLET: $(PLATFORM)-windows-static
   ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
   # change this if you add more DEPS to matrix
-  MATRIX_SIZE: 1
+  MATRIX_SIZE: 2
   matrix:
-    - {DEPS: pugixml}
-    #- DEPS: qt5-base
-    #- DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
+    - DEPS: qt5-base
+    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
 
 install:
   # pull any updated mirrors for vcpkg packages
@@ -71,11 +70,9 @@ install:
 
 build_script:
   # run the install from bash so proxy is detected
-  #- vcpkg install %DEPS% --triplet %TRIPLET%
+  - vcpkg install %DEPS% --triplet %TRIPLET%
   # zip up the deps to push artifact to releases
-  #- 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed\%TRIPLET%
-  - echo %bot_push_on_green_token%
-  - 7z a %ARTIFACT_NAME% portfile.cmake
+  - 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed\%TRIPLET%
 
 artifacts:
   - path: rgmdeps-$(PLATFORM).zip
@@ -89,5 +86,6 @@ deploy:
   artifact: rgmdeps-$(PLATFORM)
   draft: false
   prerelease: false
+  force_update: true
   on:
     branch: master
