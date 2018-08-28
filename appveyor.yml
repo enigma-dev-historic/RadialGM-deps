@@ -7,10 +7,6 @@ branches:
 # Build worker image (VM template)
 image: Visual Studio 2017
 
-# fetch repository as zip archive for faster clone
-shallow_clone: true
-clone_depth: 1
-
 platform:
   - x86
   - x64
