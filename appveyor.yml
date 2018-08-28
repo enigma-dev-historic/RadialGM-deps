@@ -82,7 +82,7 @@ deploy:
   release: rgmdeps-v$(appveyor_build_version)
   provider: GitHub
   auth_token:
-    secure: $(bot_push_on_green_token)
+    secure: 0dfPI8cYNeLks0iLSmTyzrI/H0K3CfMrBsvfslzZp66w5gqg8pqSf4Edhovsox9k
   artifact: rgmdeps-$(PLATFORM)
   draft: false
   prerelease: false
