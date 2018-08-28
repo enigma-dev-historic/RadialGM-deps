@@ -61,12 +61,12 @@ install:
       # jobs 1 and 3, and 2 and 4 have the same architectures
       If ($env:APPVEYOR_JOB_NUMBER -gt $env:MATRIX_SIZE) {
         # get the id of the previous job for the same architecture
-        Write-Host ('derfux1.') -foregroundcolor "Magenta"
         $apiURL = "https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG"
         Write-Host ('derfux2.') -foregroundcolor "Magenta"
         $project = Invoke-RestMethod -Method Get -Uri $apiURL/build/$env:APPVEYOR_BUILD_VERSION
         Write-Host ('derfux3.') -foregroundcolor "Magenta"
-        $archive_job = $project.build.jobs[$env:APPVEYOR_JOB_NUMBER - 1].jobId
+        # APPVEYOR_JOB_NUMBER isn't zero-based, but PowerShell arrays clearly are
+        $archive_job = $project.build.jobs[($env:APPVEYOR_JOB_NUMBER - 1) - $env:MATRIX_SIZE].jobId
         Write-Host ($archive_job)
         Write-Host ('derfux4.') -foregroundcolor "Magenta"
         # download and extract the previous deps so we can amend them
