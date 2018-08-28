@@ -84,7 +84,7 @@ build_script:
   - 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed\%TRIPLET%
 
 artifacts:
-  - path: rgmdeps-$(PLATFORM).zip
+  - path: $(ARTIFACT_NAME)
     name: rgmdeps-$(PLATFORM)
 
 deploy:
@@ -92,7 +92,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: 0dfPI8cYNeLks0iLSmTyzrI/H0K3CfMrBsvfslzZp66w5gqg8pqSf4Edhovsox9k
-  artifact: rgmdeps-$(PLATFORM)
+  artifact: $(ARTIFACT_NAME)
   draft: false
   prerelease: false
   force_update: true
