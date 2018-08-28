@@ -65,7 +65,7 @@ install:
         # download and extract the previous deps so we can amend them
         $artifactsURL = "https://ci.appveyor.com/api/buildjobs/$archive_job/artifacts/"
         appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
-        7z a $env:ARTIFACT_NAME C:\tools\vcpkg\installed\$env:TRIPLET
+        7z e -mmt $env:ARTIFACT_NAME C:\tools\vcpkg\installed\$env:TRIPLET
       }
 
 build_script:
