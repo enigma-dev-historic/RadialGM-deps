@@ -66,7 +66,7 @@ install:
         # download and extract the previous deps so we can amend them
         $artifactsURL = "https://ci.appveyor.com/api/buildjobs/$archive_job/artifacts/"
         appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
-        7z x -mmt $env:ARTIFACT_NAME C:\tools\vcpkg\installed
+        7z x -mmt $env:ARTIFACT_NAME -oC:\tools\vcpkg
       }
 
 build_script:
