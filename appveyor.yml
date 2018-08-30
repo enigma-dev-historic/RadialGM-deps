@@ -18,17 +18,8 @@ platform:
   - x86
   - x64
 
-for:
-- matrix:
-    only:
-      - platform: x64
-  init:
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
-- matrix:
-    only:
-      - platform: x86
-  init:
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
+init:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %PLATFORM%
 
 environment:
   QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
@@ -73,7 +64,7 @@ install:
 
 build_script:
   # run the install from bash so proxy is detected
-  - vcpkg install %DEPS% --triplet %PLATFORM%-windows-static
+  - vcpkg install %DEPS% --triplet %PLATFORM%-windows-static || cat C:\Tools\vcpkg\buildtrees\grpc\install-x86-windows-static-dbg-out.log
   # zip up the deps to push artifact to releases
   - 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed
 
