@@ -5,7 +5,7 @@ branches:
     - master
 
 # Build worker image (VM template)
-image: Visual Studio 2017
+image: Previous Visual Studio 2017
 
 # fetch repository as zip archive for faster clone
 shallow_clone: true
@@ -64,7 +64,7 @@ install:
 
 build_script:
   # run the install from bash so proxy is detected
-  - vcpkg install %DEPS% --triplet %PLATFORM%-windows-static || cat C:\Tools\vcpkg\buildtrees\grpc\install-x86-windows-static-dbg-out.log
+  - vcpkg install %DEPS% --triplet %PLATFORM%-windows-static
   # zip up the deps to push artifact to releases
   - 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed
 
