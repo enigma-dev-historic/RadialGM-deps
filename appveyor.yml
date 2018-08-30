@@ -36,14 +36,16 @@ environment:
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 2
   matrix:
-    - DEPS: qt5-base
-    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
+    - DEPS: grpc
+    - DEPS: protobuf
+    #- DEPS: qt5-base
+    #- DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
 
 install:
   # pull any updated mirrors for vcpkg packages
-  - cd C:\tools\vcpkg
-  - git pull
-  - cd %APPVEYOR_BUILD_FOLDER%
+  - #cd C:\tools\vcpkg
+  - #git pull
+  - #cd %APPVEYOR_BUILD_FOLDER%
   - ps: |
       # copy da patches over to da vcpkg port
       Copy-Item ".\fix-system-pcre2.patch" -Destination "$env:QT5PORTDIR"
