@@ -23,6 +23,7 @@ init:
 
 environment:
   QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
+  CHILLAPORTDIR: C:\tools\vcpkg\ports\qscintilla
   ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 2
@@ -41,8 +42,9 @@ install:
       Copy-Item ".\fix-system-pcre2.patch" -Destination "$env:QT5PORTDIR"
       Copy-Item ".\fix-system-pcre2-linux.patch" -Destination "$env:QT5PORTDIR"
       Copy-Item ".\fix-msvc2017.patch" -Destination "$env:QT5PORTDIR"
-      # copy over the actual portfile
-      Copy-Item ".\portfile.cmake" -Destination "$env:QT5PORTDIR"
+      # copy over the fixed portfiles
+      Copy-Item ".\qt-portfile.cmake" -Destination "$env:QT5PORTDIR\portfile.cmake"
+      Copy-Item ".\chilla-portfile.cmake" -Destination "$env:CHILLAPORTDIR\portfile.cmake"
   - ps: |
       # this depends on a deterministic ordering of the jobs
       # where every other job has the same architecture
