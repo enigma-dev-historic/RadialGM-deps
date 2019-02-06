@@ -38,14 +38,6 @@ install:
   - git pull
   - cd %APPVEYOR_BUILD_FOLDER%
   - ps: |
-      # copy da patches over to da vcpkg port
-      Copy-Item ".\fix-system-pcre2.patch" -Destination "$env:QT5PORTDIR"
-      Copy-Item ".\fix-system-pcre2-linux.patch" -Destination "$env:QT5PORTDIR"
-      Copy-Item ".\fix-msvc2017.patch" -Destination "$env:QT5PORTDIR"
-      # copy over the fixed portfiles
-      Copy-Item ".\qt-portfile.cmake" -Destination "$env:QT5PORTDIR\portfile.cmake"
-      Copy-Item ".\chilla-portfile.cmake" -Destination "$env:CHILLAPORTDIR\portfile.cmake"
-  - ps: |
       # this depends on a deterministic ordering of the jobs
       # where every other job has the same architecture
       # (e.g, debug x86, debug x64, release x86, release x64)
