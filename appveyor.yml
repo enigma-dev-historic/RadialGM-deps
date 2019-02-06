@@ -57,7 +57,7 @@ install:
 
 build_script:
   # workaround for https://github.com/Microsoft/vcpkg/issues/4663
-  - .\bootstrap-vcpkg.bat
+  - C:\tools\vcpkg\bootstrap-vcpkg.bat
   # run the install from bash so proxy is detected
   - vcpkg install %DEPS% --triplet %PLATFORM%-windows-static
   # zip up the deps to push artifact to releases
