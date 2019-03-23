@@ -26,10 +26,11 @@ environment:
   CHILLAPORTDIR: C:\tools\vcpkg\ports\qscintilla
   ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
   # change this if you add more DEPS to matrix
-  MATRIX_SIZE: 2
+  MATRIX_SIZE: 3
   matrix:
     - DEPS: qt5-base
     - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
+    - DEPS: boost
 
 install:
   # pull any updated mirrors for vcpkg packages
