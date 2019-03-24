@@ -35,7 +35,7 @@ install:
   - cd C:\tools\vcpkg
   - git pull
   - cd %APPVEYOR_BUILD_FOLDER%
-  - set ARTIFACT_NAME="rgmdeps-%PLATFORM%.zip"
+  - set ARTIFACT_NAME=rgmdeps-%PLATFORM%.zip
   - ps: |
       # this depends on a deterministic ordering of the jobs
       # where every other job has the same architecture
