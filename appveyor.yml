@@ -52,7 +52,7 @@ install:
 
         If ($env:APPVEYOR_JOB_NUMBER -gt $env:PLATFORM_SIZE + 1) {
           $archive_job = $project.build.jobs[$env:PLATFORM_SIZE].jobId
-        } Else If ($env:APPVEYOR_JOB_NUMBER -gt 1) {
+        } ElseIf ($env:APPVEYOR_JOB_NUMBER -gt 1) {
           $archive_job = $project.build.jobs[0].jobId
         }
         
