@@ -16,7 +16,6 @@ skip_tags: true
 
 platform:
   - x86
-  - x64
 
 init:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %PLATFORM%
@@ -28,9 +27,13 @@ environment:
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 3
   matrix:
-    - DEPS: qt5-base
-    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
-    - DEPS: boost
+    # must go x86,x64,x86,x64,...
+    - {DEPS: qt5-base}
+    - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla, platform: x64}
+    - {DEPS: boost}
+    - {DEPS: qt5-base, platform: x64}
+    - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla}
+    - {DEPS: boost, platform: x64}
 
 install:
   # pull any updated mirrors for vcpkg packages
