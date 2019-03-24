@@ -45,12 +45,12 @@ install:
       # jobs 1 and 2, and 3 and 4 have the same architectures
 
       # NOTE: APPVEYOR_JOB_NUMBER isn't zero-based, but PowerShell arrays clearly are
-      If (($env:APPVEYOR_JOB_NUMBER -gt 1) -or ($env:APPVEYOR_JOB_NUMBER -gt PLATFORM_SIZE + 1)) {
+      If (($env:APPVEYOR_JOB_NUMBER -gt 1) -or ($env:APPVEYOR_JOB_NUMBER -gt $env:PLATFORM_SIZE + 1)) {
         $apiURL = "https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG"
         $project = Invoke-RestMethod -Method Get -Uri $apiURL/build/$env:APPVEYOR_BUILD_VERSION
         $env:ARTIFACT_NAME = "rgmdeps-$env:PLATFORM.zip"
 
-        If ($env:APPVEYOR_JOB_NUMBER -gt PLATFORM_SIZE + 1) {
+        If ($env:APPVEYOR_JOB_NUMBER -gt $env:PLATFORM_SIZE + 1) {
           $archive_job = $project.build.jobs[$env:PLATFORM_SIZE].jobId
         } Else If ($env:APPVEYOR_JOB_NUMBER -gt 1) {
           $archive_job = $project.build.jobs[0].jobId
