@@ -18,7 +18,6 @@ environment:
   PLATFORM: x86
   matrix:
     # must go x64,x86,x64,x86,...
-    - {DEPS: pugixml, PLATFORM: x64}
     - {DEPS: qt5-base, PLATFORM: x64}
     - {DEPS: qt5-base}
     - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla, PLATFORM: x64}
