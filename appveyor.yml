@@ -19,7 +19,7 @@ environment:
   CHILLAPORTDIR: C:\tools\vcpkg\ports\qscintilla
   ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
   # change this if you add more DEPS to matrix
-  MATRIX_SIZE: 3
+  MATRIX_SIZE: 6
   PLATFORM: x86
   matrix:
     # must go x64,x86,x64,x86,...
