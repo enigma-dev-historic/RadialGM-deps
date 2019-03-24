@@ -14,26 +14,24 @@ clone_depth: 1
 # because the release pushes a tag, hence we aren't building on tags
 skip_tags: true
 
-platform:
-  - x86
-
-init:
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %PLATFORM%
-
 environment:
   QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
   CHILLAPORTDIR: C:\tools\vcpkg\ports\qscintilla
   ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 3
+  PLATFORM: x86
   matrix:
     # must go x86,x64,x86,x64,...
+    - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla, PLATFORM: x64}
     - {DEPS: qt5-base}
-    - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla, platform: x64}
     - {DEPS: boost}
-    - {DEPS: qt5-base, platform: x64}
+    - {DEPS: qt5-base, PLATFORM: x64}
     - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla}
-    - {DEPS: boost, platform: x64}
+    - {DEPS: boost, PLATFORM: x64}
+
+init:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %PLATFORM%
 
 install:
   # pull any updated mirrors for vcpkg packages
