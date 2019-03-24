@@ -14,23 +14,24 @@ clone_depth: 1
 # because the release pushes a tag, hence we aren't building on tags
 skip_tags: true
 
-platform:
-  - x86
-  - x64
-
-init:
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %PLATFORM%
-
 environment:
   QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
   CHILLAPORTDIR: C:\tools\vcpkg\ports\qscintilla
   ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 3
+  PLATFORM: x86
   matrix:
-    - DEPS: qt5-base
-    - DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla
-    - DEPS: boost
+    # must go x64,x86,x64,x86,...
+    - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla, PLATFORM: x64}
+    - {DEPS: qt5-base}
+    - {DEPS: qt5-base, PLATFORM: x64}
+    - {DEPS: boost}
+    - {DEPS: boost, PLATFORM: x64}
+    - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla}
+
+init:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %PLATFORM%
 
 install:
   # pull any updated mirrors for vcpkg packages
@@ -41,7 +42,7 @@ install:
   - ps: |
       # this depends on a deterministic ordering of the jobs
       # where every other job has the same architecture
-      # (e.g, debug x86, debug x64, release x86, release x64)
+      # (e.g, debug x64, debug x86, release x64, release x86)
       # jobs 1 and 3, and 2 and 4 have the same architectures
       If ($env:APPVEYOR_JOB_NUMBER -gt $env:MATRIX_SIZE) {
         # this gets the job id of the last job with the same architecture that
