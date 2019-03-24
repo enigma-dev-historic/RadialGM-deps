@@ -15,9 +15,6 @@ clone_depth: 1
 skip_tags: true
 
 environment:
-  QT5PORTDIR: C:\tools\vcpkg\ports\qt5-base
-  CHILLAPORTDIR: C:\tools\vcpkg\ports\qscintilla
-  ARTIFACT_NAME: rgmdeps-$(PLATFORM).zip
   # change this if you add more DEPS to matrix
   MATRIX_SIZE: 6
   PLATFORM: x86
@@ -39,6 +36,7 @@ install:
   - cd C:\tools\vcpkg
   - git pull
   - cd %APPVEYOR_BUILD_FOLDER%
+  - set ARTIFACT_NAME="rgmdeps-%PLATFORM%.zip"
   - ps: |
       # this depends on a deterministic ordering of the jobs
       # where every other job has the same architecture
