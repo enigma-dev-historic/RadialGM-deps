@@ -31,9 +31,9 @@ jobs:
   - task: BatchScript@1
     displayName: 'VCPKG Bootstrap'
     inputs:
-        filename: 'bootstrap-vcpkg.bat'
+        filename: 'vcpkg\bootstrap-vcpkg.bat'
 
-  - script: vcpkg.exe install --triplet $(arch)-windows-static $(deps)
+  - script: vcpkg\vcpkg.exe install --triplet $(arch)-windows-static $(deps)
     displayName: 'Build Dependencies'
 
   - task: ArchiveFiles@2
