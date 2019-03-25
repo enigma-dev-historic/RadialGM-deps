@@ -26,6 +26,7 @@ jobs:
   
   steps:
   - script: git.exe clone https://github.com/Microsoft/vcpkg.git && cd vcpkg
+    displayName: 'VCPKG Clone'
 
   - task: BatchScript@1
     displayName: 'VCPKG Bootstrap'
