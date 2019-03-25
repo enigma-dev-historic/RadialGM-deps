@@ -9,7 +9,7 @@ jobs:
         arch: x64
         deps: qt5-base qscintilla
       EGM deps x64:
-        platform: x64
+        arch: x64
         deps: pugixml rapidjson yaml-cpp protobuf grpc
       EMAKE deps x64: 
         arch: x64
