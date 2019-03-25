@@ -2,6 +2,8 @@ jobs:
 - job: Build
   pool:
     vmImage: 'VS2017-Win2016'
+  
+  timeoutInMinutes: 180
 
   strategy:
     matrix:
@@ -33,12 +35,14 @@ jobs:
     inputs:
         filename: 'vcpkg\bootstrap-vcpkg.bat'
 
-  - script: vcpkg\vcpkg.exe install --triplet $(arch)-windows-static $(deps)
+  - script: |
+      :repeat 
+      vcpkg\vcpkg.exe install --triplet $(arch)-windows-static $(deps) || goto :repeat
     displayName: 'Build Dependencies'
 
   - task: ArchiveFiles@2
     inputs:
-      rootFolderOrFile: 'installed'
+      rootFolderOrFile: 'vcpkg\installed'
       includeRootFolder: false
       replaceExistingArchive: true
       archiveType: '7z'
