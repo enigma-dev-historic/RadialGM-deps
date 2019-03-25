@@ -2,11 +2,32 @@ jobs:
 - job: Build
   pool:
     vmImage: 'VS2017-Win2016'
+
+  strategy:
+    matrix:
+      Qt5 x64:
+        arch: x64
+        deps: qt5-base qscintilla
+      EGM deps x64:
+        platform: x64
+        deps: pugixml rapidjson yaml-cpp protobuf grpc
+      EMAKE deps x64: 
+        arch: x64
+        deps: boost
+      Qt5 x86:
+        arch: x86
+        deps: qt5-base qscintilla
+      EGM deps x86:
+        arch: x86
+        deps: pugixml rapidjson yaml-cpp protobuf grpc
+      EMAKE deps x86: 
+        arch: x86
+        deps: boost
   
   steps:
   - task: BatchScript@1
     displayName: 'VCPKG CLONE'
-  - script: git clone https://github.com/Microsoft/vcpkg.git && cd vcpkg
+  - script: git.exe clone https://github.com/Microsoft/vcpkg.git && cd vcpkg
 
   - task: BatchScript@1
     displayName: 'VCPKG Bootstrap'
