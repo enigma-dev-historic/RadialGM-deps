@@ -42,7 +42,7 @@ jobs:
 
   - task: ArchiveFiles@2
     inputs:
-      rootFolderOrFile: 'vcpkg\installed'
+      rootFolderOrFile: 'C:\vcpkg\installed'
       includeRootFolder: false
       replaceExistingArchive: true
       archiveType: '7z'
