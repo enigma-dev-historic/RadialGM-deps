@@ -1,1 +1,58 @@
-lmao
+pool:
+  vmImage: 'VS2017-Win2016'
+
+strategy:
+  matrix:
+    Qt5 x64:
+      arch: x64
+      deps: qt5-base qscintilla
+    EGM deps x64:
+      platform: x64
+      deps: pugixml rapidjson yaml-cpp protobuf grpc
+    EMAKE deps x64: 
+      arch: x64
+      deps: boost
+    Qt5 x86:
+      arch: x86
+      deps: qt5-base qscintilla
+    EGM deps x86:
+      arch: x86
+      deps: pugixml rapidjson yaml-cpp protobuf grpc
+    EMAKE deps x86: 
+      arch: x86
+      deps: boost
+
+jobs:
+- job: Build
+  steps:
+  - task: BatchScript@1
+    displayName: 'VCPKG CLONE'
+  - script: git clone https://github.com/Microsoft/vcpkg.git && cd vcpkg
+
+  - task: BatchScript@1
+    displayName: 'VCPKG Bootstrap'
+    inputs:
+        filename: 'bootstrap-vcpkg.bat'
+
+  - script: $(VCPKG_ROOT)\vcpkg.exe install --triplet x64-windows-$(arch) $(deps)
+    displayName: 'Build Dependencies'
+
+  - task: ArchiveFiles@2
+    inputs:
+    rootFolderOrFile: 'installed'
+    includeRootFolder: false
+    replaceExistingArchive: true
+    archiveType: '7z'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(deps)-$(arch).7z'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+    artifactName: '$(deps)-$(arch)'
+
+- job: Publish
+  dependsOn: Build
+  condition: succeeded()
+  steps:
+    - task: BatchScript@1
+      displayName: 'Publish to GitHub'
+
