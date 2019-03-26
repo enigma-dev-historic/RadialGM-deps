@@ -10,15 +10,19 @@ jobs:
       EGM deps x64:
         arch: x64
         deps: pugixml rapidjson
+        archive: egm-deps-x64.7z
       EMAKE deps x64: 
         arch: x64
         deps:  yaml-cpp
+        archive: emake-deps-x64.7z
       EGM deps x86:
         arch: x86
         deps: pugixml rapidjson
+        archive: egm-deps-x86.7z
       EMAKE deps x86: 
         arch: x86
         deps: yaml-cpp
+        archive: emake-deps-x86.7z
   
   steps:
   - script: git.exe clone https://github.com/Microsoft/vcpkg.git && cd vcpkg
@@ -40,40 +44,11 @@ jobs:
       includeRootFolder: false
       replaceExistingArchive: true
       archiveType: '7z'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/$(deps)-$(arch).7z'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/$(archive)'
 
   - task: PublishBuildArtifacts@1
     inputs:
-        artifactName: '$(deps)-$(arch)'
-
-- job: Publish
-  pool:
-    vmImage: 'VS2017-Win2016'
-    
-  dependsOn: Build
-  steps:
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      buildType: 'current'
-      artifactName: 'yaml-cpp-x64'
-    
-  - script: |
-      7z x *.zip -aoa
-      mkdir -p x64/installed/
-      cd x64/installed
-      7z x ../*x64/*.7z -aoa
-    
-      cd ../../
-    
-      mkdir -p x86/installed/
-      cd x86/installed
-      7z x ../*x86/*.7z -aoa
-    
-      cd ../../
-    
-      7z a rgmdeps-x64.7z x64/installed/
-      7z a rgmdeps-x64.7z x86/installed/
-    displayName: 'Repackage Dependencies'
+        artifactName: '$(archive)'
   
   - task: GithubRelease@0 
     displayName: 'Create GitHub Release'
@@ -82,6 +57,4 @@ jobs:
       repositoryName: enigma-dev/RadialGM-deps
       tagSource: manual
       tag: $(Build.BuildNumber)      
-      assets: |
-          rgmdeps-x64.7z
-          rgmdeps-x86.7z
+      assets: '$(archive)'
