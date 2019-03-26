@@ -53,7 +53,7 @@ jobs:
   - task: GithubRelease@0 
     displayName: 'Create GitHub Release'
     inputs:
-      githubConnection: rgm-deps
+      githubConnection: rgmdeps
       repositoryName: enigma-dev/RadialGM-deps
       tagSource: manual
       tag: $(Build.BuildNumber)      
