@@ -55,11 +55,7 @@ jobs:
   - task: DownloadBuildArtifacts@0
     inputs:
       buildType: 'current'
-      artifactName: |
-        'yaml-cpp-x64'
-        'pugixml rapidjson-x64'
-        'yaml-cpp-x86'
-        'pugixml rapidjson-x86'
+      artifactName: 'yaml-cpp-x64'
     
   - script: |
       7z x *.zip -aoa
