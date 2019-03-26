@@ -57,4 +57,4 @@ jobs:
       repositoryName: enigma-dev/RadialGM-deps
       tagSource: manual
       tag: $(Build.BuildNumber)      
-      assets: '$(archive)'
+      assets: '$(Build.ArtifactStagingDirectory)/$(archive)'
