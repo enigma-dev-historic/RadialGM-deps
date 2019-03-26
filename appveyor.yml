@@ -1,0 +1,80 @@
+# branches to build
+branches:
+  # whitelist
+  only:
+    - master
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# fetch repository as zip archive for faster clone
+shallow_clone: true
+clone_depth: 1
+# since we're pushing releases we don't want infinite recursion
+# because the release pushes a tag, hence we aren't building on tags
+skip_tags: true
+
+environment:
+  PLATFORM: x86
+  matrix:
+    # must go x64,x86,x64,x86,...
+    - {DEPS: qt5-base, PLATFORM: x64}
+    - {DEPS: qt5-base}
+    - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla, PLATFORM: x64}
+    - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla}
+    - {DEPS: boost, PLATFORM: x64}
+    - {DEPS: boost}
+
+init:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %PLATFORM%
+
+install:
+  # pull any updated mirrors for vcpkg packages
+  # at the time of this writing bzip2 mirror is outdated
+  - cd C:\tools\vcpkg
+  - git pull
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - set ARTIFACT_NAME=rgmdeps-%PLATFORM%.zip
+  - ps: |
+      # this depends on a deterministic ordering of the jobs
+      # where every other job has the same architecture
+      # (e.g, debug x64, debug x86, release x64, release x86)
+      # jobs 1 and 3, and 2 and 4 have the same architectures
+      If ($env:APPVEYOR_JOB_NUMBER -gt 2) {
+        # this gets the job id of the last job with the same architecture that
+        # completed building deps in this build
+        $apiURL = "https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG"
+        $project = Invoke-RestMethod -Method Get -Uri $apiURL/build/$env:APPVEYOR_BUILD_VERSION
+        # NOTE: APPVEYOR_JOB_NUMBER isn't zero-based, but PowerShell arrays clearly are
+        $archive_job = $project.build.jobs[($env:APPVEYOR_JOB_NUMBER - 1) - 2].jobId
+        # download and extract the previous deps so we can amend them
+        $artifactsURL = "https://ci.appveyor.com/api/buildjobs/$archive_job/artifacts/"
+        appveyor DownloadFile ($artifactsURL + $env:ARTIFACT_NAME) -FileName $env:ARTIFACT_NAME
+        7z x -mmt $env:ARTIFACT_NAME -oC:\tools\vcpkg
+      }
+
+build_script:
+  # workaround for https://github.com/Microsoft/vcpkg/issues/4663
+  - C:\tools\vcpkg\bootstrap-vcpkg.bat
+  # run the install from bash so proxy is detected
+  - vcpkg install %DEPS% --triplet %PLATFORM%-windows-static
+  # zip up the deps to push artifact to releases
+  - 7z a %ARTIFACT_NAME% C:\tools\vcpkg\installed
+
+artifacts:
+  - path: $(ARTIFACT_NAME)
+    name: rgmdeps-$(PLATFORM)
+
+deploy:
+  release: rgmdeps-v$(appveyor_build_version)
+  provider: GitHub
+  auth_token:
+    secure: 0dfPI8cYNeLks0iLSmTyzrI/H0K3CfMrBsvfslzZp66w5gqg8pqSf4Edhovsox9k
+  artifact: $(ARTIFACT_NAME)
+  draft: false
+  prerelease: false
+  # because each job deploys the same deps but amended we need
+  # to force overwrite the previous ones of this release
+  force_update: true
+  on:
+    branch: master
