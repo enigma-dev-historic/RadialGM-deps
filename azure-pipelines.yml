@@ -1,54 +1,13 @@
 jobs:
 - job: Build
   pool:
-    vmImage: 'VS2017-Win2016'
+    vmImage: 'UbuntuServer'
   
   timeoutInMinutes: 180
-
-  strategy:
-    matrix:
-      EGM deps x64:
-        arch: x64
-        deps: pugixml rapidjson
-        archive: egm-deps-x64.7z
-      EMAKE deps x64: 
-        arch: x64
-        deps:  yaml-cpp
-        archive: emake-deps-x64.7z
-      EGM deps x86:
-        arch: x86
-        deps: pugixml rapidjson
-        archive: egm-deps-x86.7z
-      EMAKE deps x86: 
-        arch: x86
-        deps: yaml-cpp
-        archive: emake-deps-x86.7z
   
   steps:
-  - script: git.exe clone https://github.com/Microsoft/vcpkg.git && cd vcpkg
+  - script: git clone https://github.com/Microsoft/vcpkg.git
     displayName: 'VCPKG Clone'
-
-  - task: BatchScript@1
-    displayName: 'VCPKG Bootstrap'
-    inputs:
-        filename: 'vcpkg\bootstrap-vcpkg.bat'
-
-  - script: |
-      :repeat 
-      vcpkg\vcpkg.exe install --triplet $(arch)-windows-static $(deps) || goto :repeat
-    displayName: 'Build Dependencies'
-
-  - task: ArchiveFiles@2
-    inputs:
-      rootFolderOrFile: 'C:\vcpkg\installed'
-      includeRootFolder: false
-      replaceExistingArchive: true
-      archiveType: '7z'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/$(archive)'
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-        artifactName: '$(archive)'
   
   - task: GithubRelease@0 
     displayName: 'Create GitHub Release'
@@ -57,4 +16,4 @@ jobs:
       repositoryName: enigma-dev/RadialGM-deps
       tagSource: manual
       tag: $(Build.BuildNumber)      
-      assets: '$(Build.ArtifactStagingDirectory)/$(archive)'
+      assets: 'vcpkg\bootstrap-vcpkg.bat'
