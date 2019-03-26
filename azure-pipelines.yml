@@ -7,24 +7,18 @@ jobs:
 
   strategy:
     matrix:
-      Qt5 x64:
-        arch: x64
-        deps: qt5-base qscintilla
       EGM deps x64:
         arch: x64
-        deps: pugixml rapidjson yaml-cpp protobuf grpc
+        deps: pugixml rapidjson
       EMAKE deps x64: 
         arch: x64
-        deps: boost
-      Qt5 x86:
-        arch: x86
-        deps: qt5-base qscintilla
+        deps:  yaml-cpp
       EGM deps x86:
         arch: x86
-        deps: pugixml rapidjson yaml-cpp protobuf grpc
+        deps: pugixml rapidjson
       EMAKE deps x86: 
         arch: x86
-        deps: boost
+        deps: yaml-cpp
   
   steps:
   - script: git.exe clone https://github.com/Microsoft/vcpkg.git && cd vcpkg
@@ -58,6 +52,35 @@ jobs:
     
   dependsOn: Build
   steps:
-    - task: BatchScript@1
-      displayName: 'Publish to GitHub'
-    - script: echo wat
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      buildType: 'current'
+    
+  - script: |
+      7z x *.zip -aoa
+      mkdir -p x64/installed/
+      cd x64/installed
+      7z x ../*x64/*.7z -aoa
+    
+      cd ../../
+    
+      mkdir -p x86/installed/
+      cd x86/installed
+      7z x ../*x86/*.7z -aoa
+    
+      cd ../../
+    
+      7z a rgmdeps-x64.7z x64/installed/
+      7z a rgmdeps-x64.7z x86/installed/
+    displayName: 'Repackage Dependencies'
+  
+  - task: GithubRelease@0 
+    displayName: 'Create GitHub Release'
+    inputs:
+      githubConnection: enigma-dev
+      repositoryName: enigma-dev/RadialGM-deps
+      tagSource: manual
+      tag: $(Build.BuildNumber)      
+      assets: |
+          rgmdeps-x64.7z
+          rgmdeps-x86.7z
