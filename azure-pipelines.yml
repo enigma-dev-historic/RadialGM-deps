@@ -16,4 +16,4 @@ jobs:
       repositoryName: enigma-dev/RadialGM-deps
       tagSource: manual
       tag: $(Build.BuildNumber)      
-      assets: 'vcpkg\bootstrap-vcpkg.bat'
+      assets: 'vcpkg/bootstrap-vcpkg.bat'
