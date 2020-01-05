@@ -71,7 +71,7 @@ deploy:
   auth_token:
     secure: 0dfPI8cYNeLks0iLSmTyzrI/H0K3CfMrBsvfslzZp66w5gqg8pqSf4Edhovsox9k
   artifact: $(ARTIFACT_NAME)
-  draft: false
+  draft: true
   prerelease: false
   # because each job deploys the same deps but amended we need
   # to force overwrite the previous ones of this release
