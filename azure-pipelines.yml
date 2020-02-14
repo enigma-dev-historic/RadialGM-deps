@@ -8,7 +8,7 @@ jobs:
   - task: Cache@2
     displayName: 'Cache vcpkgs artifacts'
     inputs:
-      key: $(Build.SourcesDirectory)/vcpkg_windows.txt | "$(vcpkgGitRef)" | "$(Agent.OS)"
+      key: $(Build.SourcesDirectory)/vcpkg_windows.txt | "$(Agent.OS)"
       path: '$(Build.BinariesDirectory)/vcpkg'
   - task: run-vcpkg@0
     displayName: 'Run vcpkg'
