@@ -16,6 +16,6 @@ jobs:
   - task: run-vcpkg@0
     displayName: 'Run vcpkg'
     inputs:
-      vcpkgArguments: @$(Build.SourcesDirectory)/vcpkg_windows.txt
+      vcpkgArguments: "@$(Build.SourcesDirectory)/vcpkg_windows.txt"
       vcpkgGitCommitId: $(vcpkgGitRef)
       vcpkgGitURL: https://github.com/microsoft/vcpkg.git
