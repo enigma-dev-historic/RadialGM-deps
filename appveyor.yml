@@ -18,6 +18,8 @@ environment:
   PLATFORM: x86
   matrix:
     # must go x64,x86,x64,x86,...
+    - {DEPS: libjpeg-turbo zlib libpng double-conversion egl-registry bzip2 freetype ragel harfbuzz icu openssl-windows openssl libpq pcre2 sqlite3, PLATFORM: x64}
+    - {DEPS: libjpeg-turbo zlib libpng double-conversion egl-registry bzip2 freetype ragel harfbuzz icu openssl-windows openssl libpq pcre2 sqlite3}
     - {DEPS: qt5-base, PLATFORM: x64}
     - {DEPS: qt5-base}
     - {DEPS: pugixml rapidjson yaml-cpp protobuf grpc qscintilla, PLATFORM: x64}
