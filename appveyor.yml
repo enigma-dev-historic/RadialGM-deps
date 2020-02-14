@@ -5,7 +5,7 @@ branches:
     - master
 
 # Build worker image (VM template)
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 # fetch repository as zip archive for faster clone
 shallow_clone: true
