@@ -1,19 +1,19 @@
 jobs:
 - job: Build
   pool:
-    vmImage: 'ubuntu-16.04'
-  
-  timeoutInMinutes: 180
-  
-  steps:
-  - script: git clone https://github.com/Microsoft/vcpkg.git
-    displayName: 'VCPKG Clone'
-  
-  - task: GithubRelease@0 
-    displayName: 'Create GitHub Release'
+    vmImage: 'windows-latest'
+    # Cache/restore the vcpkg's build artifacts.
+  - task: Cache@2
+    displayName: 'Cache vcpkg's artifacts'
     inputs:
-      githubConnection: rgmdeps
-      repositoryName: enigma-dev/RadialGM-deps
-      tagSource: manual
-      tag: $(Build.BuildNumber)      
-      assets: 'vcpkg/bootstrap-vcpkg.bat'
+      key: $(Build.SourcesDirectory)/vcpkg_windows.txt | "$(vcpkgGitRef)" | "$(Agent.OS)"
+      path: '$(Build.BinariesDirectory)/vcpkg'
+   
+   - task: run-vcpkg@0
+     displayName: 'Run vcpkg'
+     inputs:
+       vcpkgArguments: @$(Build.SourcesDirectory)/vcpkg_windows.txt
+       # Specify the exact commit id to fetch.
+       vcpkgGitCommitId: $(vcpkgGitRef)
+       # URL to fetch vcpkg from (default is the official one).
+       vcpkgGitURL: https://github.com/microsoft/vcpkg.git
